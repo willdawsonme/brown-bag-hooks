@@ -1,0 +1,101 @@
+import { Notes } from "mdx-deck";
+
+# useCallback
+
+_Similar to_ class instance function
+
+---
+
+```jsx smaller
+import React, { useState, useCallback } from "react";
+
+const Example = () => {
+  const [active, setActive] = useState(false);
+
+  const handleClick = useCallback(() => {
+    setActive(!!active);
+  }, [active, setActive]);
+
+  return <MemoToggle onClick={handleClick} />;
+};
+```
+
+<Notes>
+
+- Used when you need the value of a function to stay the same across renders.
+  - i.e to pass to a memoized/pure component.
+- Takes a function and a dependencies array (similar to useEffect).
+
+- Note: Could remove `active` and use `setActive(active => !!active)` if you dont want callback to change after each click.
+
+</Notes>
+
+---
+
+```jsx smaller
+const [isShiftDown, setIsShiftDown] = useState(false);
+
+const handleKeyDown = e => {
+  isShift(e) && setIsShiftDown(true);
+};
+
+const handleKeyUp = e => {
+  isShiftDown && setIsShiftDown(false);
+};
+
+useEffect(() => {
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("keyup", handleKeyUp);
+
+  return () => {
+    window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("keyup", handleKeyUp);
+  };
+}, []);
+```
+
+<Notes>
+
+- Real example I came across recently where useCallback helped.
+- On key up, isShiftDown was always false.
+  - I didn't pass handleKeyUp to the useEffect dependencies.
+  - Doing so would cause effect to run on every render.
+  - Wrap in useCallback!
+
+</Notes>
+
+---
+
+# useMemo
+
+Memoize complex calculations
+
+---
+
+```jsx smaller
+import React, { useState, useCallback, useMemo } from "react";
+
+const Example = () => {
+  const [active, setActive] = useState(false);
+
+  const handleClick = useCallback(() => {
+    setActive(active => !active);
+  }, []);
+
+  const value = useMemo(() => {
+    return {
+      isActive: somethingComplex(active)
+    };
+  }, [active]);
+
+  return <MemoToggle value={value} onClick={handleClick} />;
+};
+```
+
+<Notes>
+
+- Similar to useCallback but for values.
+- Prevents complex calculations being run too often.
+- Also maintains reference equality across renders.
+
+</Notes>

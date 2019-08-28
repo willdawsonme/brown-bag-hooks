@@ -1,0 +1,154 @@
+import { Notes } from "mdx-deck";
+import { FullScreenCode } from "mdx-deck/layouts";
+import Counter from "../components/Counter";
+import Split from "../components/Split";
+
+# useState
+
+**Replaces:** this.setState()
+
+---
+
+```jsx
+import React, { useState } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => setCount(count + 1);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={handleClick}>Click me</button>
+    </div>
+  );
+};
+```
+
+<Notes>
+
+- Takes an initial value.
+- Can also give it a function to return the initial value if it's an expensive initial state.
+  - So it's not called on every render (uselessly).
+  - i.e. JSON.parse from local storage.
+- Destructure the returned array to name your value (count) and set function (setCount).
+
+## Setting
+
+- Set the value by calling `setCount` with new value.
+- You can also pass a function if the state is derived from the current value.
+  - Avoids race conditions when two updates happen simultaneously and override the previous value.
+  - **Look this up a bit.**
+
+</Notes>
+
+---
+
+<Counter />
+
+---
+
+```js smaller
+const [state, setState] = useState({
+  active: true,
+  input: "Hello, world!"
+});
+
+// Doesn't merge the value.
+setState({ input: "Hi!" });
+// state = { input: "Hi!" }
+
+// You should manually merge the state.
+setState(state => ({ ...state, input: "Hi!" }));
+// state = { active: true, input: "Hi!" }
+```
+
+<Notes>
+
+- Doesn't automatically merge object values like `this.setState`.
+- If you need to, manually spread existing state.
+
+</Notes>
+
+---
+
+```js smaller
+// Separate your state values when updated independently.
+const [active, setActive] = useState(true);
+const [input, setInput] = useState("Hello, world!");
+setActive(true);
+setInput("Hi!");
+
+// Or keep values in an object when they're updated together.
+const [position, setPosition] = useState({ x: 0, y: 0 });
+setPosition({ x: 10, y: 100 });
+```
+
+<Notes>
+
+- You can (and will) have multiple `useState` hooks in one component.
+- If you often update two values at the same time, you can keep them in one value.
+
+</Notes>
+
+---
+
+<Split>
+
+<div>
+
+# Classes
+
+```jsx smaller
+import React from "react";
+
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
+  }
+
+  handleClick = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+  render() {
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={handleClick}>Click me</button>
+      </div>
+    );
+  }
+}
+```
+
+</div>
+
+<div>
+
+# Hooks
+
+```jsx smaller
+import React, { useState } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => setCount(count + 1);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={handleClick}>Click me</button>
+    </div>
+  );
+};
+```
+
+</div>
+
+</Split>

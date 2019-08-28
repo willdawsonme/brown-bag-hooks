@@ -1,0 +1,98 @@
+import { Image, Notes, Appear } from "mdx-deck";
+import { FullScreenCode, Split } from "mdx-deck/layouts";
+
+# useHooks(👝)
+
+<Notes>
+
+</Notes>
+
+---
+
+<h1 style={{ margin: 0 }}>What's a hook?</h1>
+
+<Image src="../assets/paul.png" size="20%" height="50vh" />
+
+<Notes>
+
+# What's a hook?
+
+- A way to _hook in_ to react features
+- They're just functions that you call in your React components
+
+</Notes>
+
+---
+
+## Why?
+
+- Don't need classes
+- Better separation of code
+- You can more easily abstract shared logic
+- Less need for HOCs and render props
+
+<Notes>
+
+- You don't have to reach for classes
+  - Adding state to a component is a one-liner: `useState()`
+- Separates code by feature, not by lifecycle
+- Can more easily abstract shared logic without wrappers
+- Less need for HOCs and render props, simpler tree
+
+</Notes>
+
+---
+
+## Rules of Hooks
+
+- No nesting
+
+---
+
+```
+if (thing) {
+    useEffect(() => {
+        doThing();
+    });
+}
+```
+
+<Notes>
+
+- This is a very naive example but...
+
+## Don't do this
+
+</Notes>
+
+---
+
+```
+useEffect(() => {
+    if (thing) {
+        doThing();
+    }
+});
+```
+
+<Notes>
+
+## Do this
+
+</Notes>
+
+---
+
+## Rules of Hooks
+
+<ul>
+  <li>No nesting</li>
+  <Appear>
+    <li>No use in classes</li>
+    <li>
+
+Enforced by `eslint-plugin-react-hooks`
+
+</li></Appear>
+
+</ul>

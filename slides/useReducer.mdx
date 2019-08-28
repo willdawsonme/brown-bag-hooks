@@ -1,0 +1,91 @@
+import { Notes } from "mdx-deck";
+
+# useReducer
+
+Alternative to `useState`
+
+---
+
+```jsx smaller
+import React, { useReducer } from "react";
+
+const initialState = { count: 0 };
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "increment":
+      return { count: state.count + 1 };
+
+    case "decrement":
+      return { count: state.count - 1 };
+
+    default:
+      throw new Error("Invalid action");
+  }
+};
+
+const ReducerCounter = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div>
+      <p>You have clicked {state.count} times</p>
+      <button onClick={() => dispatch({ type: "increment" })}>Increment</button>
+      <button onClick={() => dispatch({ type: "decrement" })}>Decrement</button>
+    </div>
+  );
+};
+```
+
+<Notes>
+
+- Provide a reducer function and an initial state.
+  - Very similar to redux reducers.
+- Good for complex state with multiple sub-values.
+- Good when state updates rely on existing values.
+- Easy to test in isolation.
+- You can pass dispatch down to deep child components via useContext instead of callbacks.
+
+</Notes>
+
+---
+
+```js smaller
+const undosReducer = (state, action) => {
+  switch (action.type) {
+    case "undo":
+      return {
+        ...state,
+        undos: state.undos.slice(0, -1),
+        redos: [...state.redos].push(action.value)
+      };
+
+    case "redo":
+      return {
+        ...state,
+        undos: [...state.undos].push(action.value),
+        redos: state.redos.slice(0, -1)
+      };
+
+    case "change":
+      return {
+        ...state,
+        undos: [...state.undos].push(action.value).slice(0, -20),
+        redos: []
+      };
+
+    default:
+      throw new Error("invalid action");
+  }
+};
+```
+
+<Notes>
+
+- Complex state to manage undos/redos in 9Press.
+- Reasons useReducer is good:
+  - Always updating undos + redos at the same time.
+  - Relies heavily on previous state.
+  - Much easier to abstract this state logic into a reducer and keep complex logic out of the component.
+
+</Notes>

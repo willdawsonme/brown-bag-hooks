@@ -1,0 +1,119 @@
+import { Notes } from "mdx-deck";
+
+export const dollar = "$";
+
+# useCustomHook
+
+Combine hooks for re-use
+
+---
+
+```jsx smaller
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `You clicked ${dollar}{count} times.`;
+  }, [count]);
+
+  return <p>You clicked {count} times.</p>;
+};
+```
+
+---
+
+### Extract to custom hook
+
+```jsx smaller
+const useDocumentTitle = title => {
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+};
+```
+
+---
+
+```jsx smaller
+import useDocumentTitle from "../hooks/use-document-title";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  useDocumentTitle(`You clicked ${dollar}{count} times.`);
+
+  return <p>You clicked {count} times.</p>;
+};
+```
+
+---
+
+```jsx smaller
+const Example = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = e => {
+      setMousePosition({
+        x: e.pageX,
+        y: e.pageY
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  return (
+    <div>
+      The mouse position is: <pre>{JSON.stringify(mousePosition)}</pre>
+    </div>
+  );
+};
+```
+
+---
+
+### Extract to custom hook
+
+```jsx smaller
+const useMousePosition = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = e => {
+      setMousePosition({
+        x: e.pageX,
+        y: e.pageY
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  return mousePosition;
+};
+```
+
+---
+
+```jsx smaller
+import useMousePosition from "../hooks/use-mouse-position";
+
+const Example = () => {
+  const mousePosition = useMousePosition();
+
+  return (
+    <div>
+      The mouse position is: <pre>{JSON.stringify(mousePosition)}</pre>
+    </div>
+  );
+};
+```

@@ -1,0 +1,236 @@
+import { Notes } from "mdx-deck";
+import Split from "../components/Split";
+
+export const dollar = "$";
+
+# useEffect
+
+**Replaces**
+
+`componentDidMount`<br />
+`componentDidUpdate`<br />
+`componentWillReceiveProps`<br />
+`componentWillUnmount`
+
+<Notes>
+
+- Don't have to duplicate logic in didMount, didUpdate etc.
+- Keeps related logic together.
+  - Previously you might attach listeners in did mount, remove them in willUnmount.
+  - With useEffect, related logic is in the same effect.
+
+</Notes>
+
+---
+
+<div style={{ opacity: 0.5 }}>
+
+```jsx smaller
+import React, { useState, useEffect } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+```
+
+</div>
+
+<div style={{ marginLeft: '0.6em' }}>
+
+```jsx smaller
+useEffect(() => {
+  document.title = `You clicked ${dollar}{count} times`;
+});
+```
+
+</div>
+
+<div style={{ opacity: 0.5 }}>
+
+```jsx smaller
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+};
+```
+
+</div>
+
+<Notes>
+
+- By default, **effects** are run _after_ every render.
+
+</Notes>
+
+---
+
+### Effect dependencies
+
+```jsx
+useEffect(() => {
+  document.title = `You clicked ${dollar}{count} times`;
+}, [count]);
+```
+
+<Notes>
+
+- You can avoid re-running effects with the dependencies array.
+
+  - If you don't provide an array, the effect is run on every render.
+  - If you do, it will only run when any of your dependencies change.
+
+- **Note: You should add any variables used inside the effect to the array.**
+  - Including functions.
+
+</Notes>
+
+---
+
+### Run effect on mount
+
+```jsx
+useEffect(() => {
+  loadData();
+}, []);
+```
+
+<Notes>
+
+- Provide an empty array to only run the effect once (on mount).
+- Be careful. If `loadData` relies on props (like an id), it won't be reloaded when that id changes.
+
+</Notes>
+
+---
+
+```jsx
+useEffect(() => {
+  document.title = `You clicked ${dollar}{count} times`;
+}, [count]);
+
+useEffect(() => {
+  loadData();
+}, []);
+```
+
+<Notes>
+
+- You can use multiple effects to separate concerns.
+
+</Notes>
+
+---
+
+# Effect cleanup
+
+```jsx smaller
+useEffect(() => {
+  const handleKeyDown = e => {
+    console.log("key down", e);
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    window.removeEventListener("keydown", handleKeyDown);
+  };
+}, []);
+```
+
+<Notes>
+
+- Cleanup effects by returning a function.
+- In this case, on component unmount, our cleanup function will run to remove the event listener.
+- You can add a cleanup function to any effect
+  - i.e.to clear some state when a value changes.
+  - Run before the next effect runs.
+
+</Notes>
+
+---
+
+<Split>
+
+<div>
+
+# Classes
+
+```jsx smaller
+import React from "react";
+
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
+  }
+
+  componentDidMount() {
+    document.title = `You clicked ${dollar}{this.state.count} times.`;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.count !== this.state.count) {
+      document.title = `You clicked ${dollar}{this.state.count} times.`;
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+</div>
+
+<div>
+
+# Hooks
+
+````jsx smaller
+import React, { useState, useEffect } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = ```You clicked ${dollar}{count} times.```;
+  }, [count]);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+};
+````
+
+</div>
+
+</Split>
+
+---
+
+# useLayoutEffect
+
+Same as `useEffect` but...
+
+<Notes>
+
+- Layout effects are called before regular effects.
+- Changes made in these effects are made visible immediately, before the change that triggered them.
+- Generally used for measuring dom layouts.
+- Use `useEffect` in 99% of cases.
+
+</Notes>

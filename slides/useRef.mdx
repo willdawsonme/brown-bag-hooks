@@ -1,0 +1,127 @@
+import { Notes } from "mdx-deck";
+import Split from "../components/Split.jsx";
+
+# useRef
+
+**Replaces:** instance variables (`this.x`)
+
+---
+
+```jsx smaller
+import React, { useEffect, useRef } from "react";
+
+const Example = () => {
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current.focus();
+  });
+
+  return (
+    <div>
+      <input name="input" ref={inputRef} value="Hello" />
+    </div>
+  );
+};
+```
+
+<Notes>
+
+- Used to store any value to be available across renders.
+- Commonly used to store a reference to a dom element.
+- Replaces `React.createRef()`.
+
+</Notes>
+
+---
+
+```jsx smaller
+import React, { useEffect, useRef } from "react";
+
+const Example = () => {
+  const clicked = useRef(false);
+
+  const handleClick = () => {
+    clicked.current = true;
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Click me</button>
+    </div>
+  );
+};
+```
+
+<Notes>
+
+- Can also be used to store a reference to _any_ value across re-renders.
+- Replaces instance variables in classes.
+- Changing the ref value won't trigger a re-render like state changes.
+
+</Notes>
+
+---
+
+<Split>
+
+<div>
+
+# Classes
+
+```jsx smaller
+import React from "react";
+
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.buttonRef = React.createRef();
+    this.clicked = false;
+  }
+
+  handleClick() {
+    this.clicked = true;
+  }
+
+  render() {
+    return (
+      <div>
+        <button ref={this.buttonRef} onClick={handleClick}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+</div>
+
+<div>
+
+# Hooks
+
+```jsx smaller
+import React, { useRef } from "react";
+
+const Counter = () => {
+  const buttonRef = useRef();
+  const clicked = useRef(false);
+
+  const handleClick = () => {
+    clicked.current = true;
+  };
+
+  return (
+    <div>
+      <button ref={buttonRef} onClick={handleClick}>
+        Click me
+      </button>
+    </div>
+  );
+};
+```
+
+</div>
+
+</Split>

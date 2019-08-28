@@ -1,0 +1,62 @@
+import { Notes } from "mdx-deck";
+
+# useContext
+
+**Replaces**
+
+`static contextTypes`
+
+`<Context.Consumer />`
+
+`withContext()`
+
+---
+
+<div style={{ opacity: 0.5 }}>
+
+```jsx smaller
+import React, { useState, useContext } from "react";
+
+const CounterContext = React.createContext(0);
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <CounterContext.Provider value={count}>
+      <button onClick={handleClick}>Click me</button>
+      <CounterChild />
+    </CounterContext.Provider>
+  );
+};
+
+const CounterChild = () => {
+```
+
+</div>
+
+<div style={{ marginLeft: '0.6em', marginTop: '-0.5em' }}>
+
+```jsx smaller
+const count = useContext(CounterContext);
+```
+
+</div>
+
+<div style={{ opacity: 0.5 }}>
+
+```jsx smaller
+
+  return <p>You clicked {count} times</p>;
+};
+
+```
+
+</div>
+
+<Notes>
+
+- Context changes will trigger an update.
+- You can use multiple contexts per component.
+
+</Notes>
